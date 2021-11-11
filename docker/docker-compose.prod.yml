@@ -1,0 +1,49 @@
+version:  '3.7'
+
+services:
+  php_training-apps:
+    container_name: php_training-apps
+    build: dockerfile/php
+    restart: on-failure
+    networks:
+      - yourtar
+    expose:
+      - "9000"
+    volumes:
+      - ../app:/var/www/html
+      - ../app/vendor:/var/www/html/vendor
+    links:
+      - mysql_training-apps
+
+  nginx_training-apps:
+    container_name: nginx_training-apps
+    image: nginx:latest
+    restart: on-failure
+    networks:
+      - yourtar
+    expose:
+      - "80"
+    volumes:
+      - ../app:/var/www/html
+      - ./logs/nginx:/var/log/nginx
+      - ./config/nginx:/etc/nginx/conf.d
+    links:
+      - php_training-apps
+
+  mysql_training-apps:
+    container_name: mysql_training-apps
+    image: mysql:5.7
+    restart: on-failure
+    networks:
+      - yourtar
+    expose:
+      - "3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+    volumes:
+      - ./db/user:/var/lib/mysql
+
+networks:
+  yourtar:
+    external:
+      name: yourtar
