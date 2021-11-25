@@ -120,7 +120,6 @@ class TrainingController extends AbstractController
                           return new JsonResponse(['message' => (string) $errors, 'code' => 400], 400);
                     } 
                     $this->em->persist($goal);
-                    $this->em->flush();
                 }
                 $goalUser = new GoalUser($goal);
                 $goalUser->setUserId($program->getOwnerId());
@@ -131,7 +130,6 @@ class TrainingController extends AbstractController
                 return new JsonResponse(['message' => (string) $errors, 'code' => 400], 400);
             } 
             $this->em->persist($trainingPlan);
-            $this->em->flush();
         }
 
         if(!is_null($goalUser) && !is_null($goalInfo)) {
@@ -141,8 +139,7 @@ class TrainingController extends AbstractController
         }
 
         if(!is_null($goalUser)) {
-            $this->em->persist($goalUser);
-            $this->em->flush();
+            $this->em->persist($goalUser); 
         }
 
         $training->setGoal($goalUser);
